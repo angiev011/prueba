@@ -136,10 +136,6 @@ class _ProductsScreenBody extends StatelessWidget {
             : () async {
                 if (!productForm.isValidForm()) return;
 
-                final String? id = await productsService.SubirImagen();
-
-                if (id == null) productForm.product.id = id;
-
                 final String? imageUrl = await productsService.SubirImagen();
 
                 if (imageUrl != null) productForm.product.imagen = imageUrl;

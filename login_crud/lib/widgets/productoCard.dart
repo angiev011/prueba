@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:login_crud/models/models.dart';
 import 'package:login_crud/services/services.dart';
+import 'package:login_crud/services/services.dart';
 import 'package:provider/provider.dart';
 
 class ProductoCard extends StatelessWidget {
-  const ProductoCard({super.key, required this.product});
+  ProductoCard({super.key, required this.product});
 
   final ProductModel product;
 
@@ -24,7 +25,6 @@ class ProductoCard extends StatelessWidget {
             _detallesProducto(
               /////////argumentos
               nombre: product.nombre,
-              subNombre: product.id!,
             ),
             Positioned(
                 top: 0,
@@ -139,10 +139,8 @@ class _flexArriba extends StatelessWidget {
 ////////////////////////////////////////////////////////////////////
 class _detallesProducto extends StatelessWidget {
   final String nombre;
-  final String subNombre;
 
-  const _detallesProducto(
-      {super.key, required this.nombre, required this.subNombre});
+  const _detallesProducto({super.key, required this.nombre});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -165,13 +163,6 @@ class _detallesProducto extends StatelessWidget {
               //si se sale se utiliza el overflow
               overflow: TextOverflow.ellipsis,
             ),
-            Text(
-              subNombre,
-              style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
-            )
           ],
         ),
       ),

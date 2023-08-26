@@ -90,16 +90,15 @@ class ProductService extends ChangeNotifier {
     }
   }
 
-  Future<String> crearProducto(ProductModel producto) async {
+  Future<String?> crearProducto(ProductModel producto) async {
     final url = Uri.https(_baseUrl, 'producto.json',
         {'auth': await storage.read(key: 'token') ?? ''});
     final rep = await http.post(url, body: producto.toJson());
     final decodeData = json.decode(rep.body);
     // le asigno el id al producto
     producto.id = decodeData['nombre'];
-
     productos.add(producto);
-    return producto.id!;
+    return producto.id;
   }
 
   void actualizarProductoImagen(String path) {
