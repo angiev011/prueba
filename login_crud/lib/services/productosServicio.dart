@@ -8,7 +8,7 @@ import '../models/models.dart';
 
 class ProductService extends ChangeNotifier {
   final String _baseUrl = 'crudprueba-8ba10-default-rtdb.firebaseio.com';
-  ProductModel? product;
+  late ProductModel ProductoSeleccionado;
 
   List<ProductModel> productos = [];
 
@@ -19,7 +19,6 @@ class ProductService extends ChangeNotifier {
 
   ////////// ç¡
   // ignore: non_constant_identifier_names
-  ProductModel? ProductoSeleccionado;
   File? nuevaImagenArchivo;
 
   //// cuando yo llame el servicio y apenas se cree llame la instancia
@@ -67,7 +66,7 @@ class ProductService extends ChangeNotifier {
 // preticion al backend
 //actualizacion base de datos
   Future<String> actualizarProducto(ProductModel producto) async {
-    final url = Uri.https(_baseUrl, 'producto/${producto.id}.json',
+    final url = Uri.https(_baseUrl, '/producto/${producto.id}',
         {'auth': await storage.read(key: 'token') ?? ''});
     final rep = await http.put(url, body: producto.toJson());
     //final decodeData = rep.body;
@@ -91,19 +90,20 @@ class ProductService extends ChangeNotifier {
     }
   }
 
-  Future<String?> crearProducto(ProductModel producto) async {
-    final url = Uri.https(_baseUrl, 'producto.json');
+  Future<String> crearProducto(ProductModel producto) async {
+    final url = Uri.https(_baseUrl, 'producto.json',
+        {'auth': await storage.read(key: 'token') ?? ''});
     final rep = await http.post(url, body: producto.toJson());
-    final decodeData = jsonDecode(rep.body);
+    final decodeData = json.decode(rep.body);
     // le asigno el id al producto
     producto.id = decodeData['nombre'];
 
     productos.add(producto);
-    return producto.id;
+    return producto.id!;
   }
 
   void actualizarProductoImagen(String path) {
-    ProductoSeleccionado?.imagen = path;
+    ProductoSeleccionado.imagen = path;
     nuevaImagenArchivo = File.fromUri(Uri(path: path));
     notifyListeners();
   }

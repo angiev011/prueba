@@ -42,7 +42,7 @@ class _ProductsScreenBody extends StatelessWidget {
           children: [
             Stack(
               children: [
-                ImageProduct(url: productsService.ProductoSeleccionado?.imagen),
+                ImageProduct(url: productsService.ProductoSeleccionado.imagen),
 
                 /// BOTON IR HACIA ATRAS
                 Positioned(
@@ -126,20 +126,26 @@ class _ProductsScreenBody extends StatelessWidget {
       ),
 
       ///BOTON GUARDAR CAMBIOS O AGREGAR
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: productsService.isSave
+        child: productsService.isSave
+            ? CircularProgressIndicator(color: Colors.white)
+            : Icon(Icons.save_outlined),
+        onPressed: productsService.isLoading
             ? null
             : () async {
-                /// que va pasar cuando se presione el boton
                 if (!productForm.isValidForm()) return;
-                final String? urlImage = await productsService.SubirImagen();
-                if (urlImage != null) productForm.product?.imagen = urlImage;
 
-                await productsService.guardarProducto(productForm.product!);
+                final String? id = await productsService.SubirImagen();
+
+                if (id == null) productForm.product.id = id;
+
+                final String? imageUrl = await productsService.SubirImagen();
+
+                if (imageUrl != null) productForm.product.imagen = imageUrl;
+
+                await productsService.guardarProducto(productForm.product);
               },
-        child: productsService.isSave
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Icon(Icons.save_outlined),
       ),
     );
   }
@@ -172,8 +178,8 @@ class _FormularioCrea extends StatelessWidget {
                   height: 10,
                 ),
                 TextFormField(
-                  initialValue: producto?.nombre,
-                  onChanged: (value) => producto?.nombre = value,
+                  initialValue: producto.nombre,
+                  onChanged: (value) => producto.nombre = value,
                   validator: (value) {
                     // ignore: prefer_is_empty
                     if (value == null || value.length < 1) {
@@ -189,15 +195,15 @@ class _FormularioCrea extends StatelessWidget {
                   height: 30,
                 ),
                 TextFormField(
-                  initialValue: producto?.precio.toString(),
+                  initialValue: producto.precio.toString(),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(
                         RegExp(r'^(\d+)?\.?\d{0,2}'))
                   ],
                   onChanged: (value) {
                     (double.tryParse(value) == null)
-                        ? producto?.precio = 0
-                        : producto?.precio = double.parse(value);
+                        ? producto.precio = 0
+                        : producto.precio = double.parse(value);
                   },
                   keyboardType: TextInputType.number,
                   decoration: InputDecorations.loginInputDecoration(
@@ -208,7 +214,7 @@ class _FormularioCrea extends StatelessWidget {
                   height: 30,
                 ),
                 SwitchListTile.adaptive(
-                  value: producto!.disponible,
+                  value: producto.disponible,
                   title: const Text('Disponible Para Subasta'),
                   activeColor: Colors.indigo,
                   onChanged: productForm.updateDisponible,
